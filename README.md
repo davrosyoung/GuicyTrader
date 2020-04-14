@@ -1,0 +1,2 @@
+# GuicyTrader
+Programming Assignment
