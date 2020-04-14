@@ -23,7 +23,7 @@ public class Assignment {
   private ExchangeCode exchangeCode;
   private int currentBrokerage;
 
-  private static final CompanyCode[] COMPANY_CODES = {CompanyCode.CBA, CompanyCode.NAB, CompanyCode.QAN};
+  private static final CompanyCode[] COMPANY_CODES = CompanyCode.values();
 
   public static void main(String...args) {
     boolean lastParamExchange = false;
@@ -130,19 +130,24 @@ public class Assignment {
   }
 
   public void trade() {
-    List<Trade> playbook = conjureUpRandomPlaybook(this.exchangeCode, 20, 20);
+    int numberBuys = (int)Math.ceil(Math.random() * 40.0D);
+    int numberSells = (int)Math.ceil(Math.random() * 40.0D);
+    List<Trade> playbook = conjureUpRandomPlaybook(this.exchangeCode, numberBuys, numberSells);
     for (Trade trade : playbook) {
       switch(trade.getTransactionType()) {
         case BUY:
           try {
+            // we only end up using a subset of the trade entry fields.
             stockExchange.buy(trade.getCompanyCode().name(), trade.getQuantity());
-          } catch (InsufficentUnitsException e) {
-            System.err.println("WARN - " + e.getMessage());
+          } catch (InsufficentUnitsException expected) {
+            // this is expected.
+            System.err.println("WARN - " + expected.getMessage());
             System.err.flush();
-          } catch (IOException e) {
+          } catch (IOException wtf) {
+            // not quite so expected...
             System.err.println("ERROR - System failure caused buy to be refused " + trade);
-            System.err.println(e.getClass() + " - " + e.getMessage());
-            e.printStackTrace(System.err);
+            System.err.println(wtf.getClass() + " - " + wtf.getMessage());
+            wtf.printStackTrace(System.err);
             System.err.flush();
           }
           break;
@@ -182,7 +187,16 @@ public class Assignment {
     }
   }
 
-  public List<Trade> conjureUpRandomPlaybook(
+  /**
+   * Conjure up some transactions (mixture of buy and sell transactions) of random
+   * quantities. There is absolutely NO guarantee that there shall be a sufficient
+   * quantity of SELL transactions to faciliate subsequent BUY transactions.
+   * @param exchangeCode the exchange that the transactions belong to.
+   * @param numberBuys how many buy transactions to create.
+   * @param numberSells how many sell transactions to create.
+   * @return order is important, so return a list.
+   */
+  protected static List<Trade> conjureUpRandomPlaybook(
       final ExchangeCode exchangeCode,
       final int numberBuys,
       final int numberSells
@@ -196,18 +210,23 @@ public class Assignment {
       boolean coin = raw <= 0.50D;
       TransactionType transactionType = coin ? BUY : SELL;
       if (transactionType == SELL && remainingSells < 1) {
-        continue;
+        continue; // we already have sufficient sells.
       } else {
         remainingSells--;
       }
       if (transactionType == BUY && remainingBuys < 1) {
-        continue;
+        continue; // we already have sufficient buys
       } else {
         remainingBuys--;
       }
-      int companyCodeIndex = (int)Math.floor(Math.random() * 2.999);
+      // get one of our companies.
+      int companyCodeIndex = (int)Math.floor(Math.random() * (COMPANY_CODES.length - 0.0001D));
       int qty = (int)Math.ceil(Math.random() * 100.0D);
       CompanyCode companyCode = COMPANY_CODES[companyCodeIndex];
+      /* the brokerage is worked out later, we simply use a Trade object
+       * out of convenience, its only the company code, transaction type and qty
+       * that we're interested in. we don't actually even use the timestamp either.
+       */
       Trade trade = new Trade(exchangeCode, transactionType, new Date(System.currentTimeMillis()), companyCode, qty, null);
       result.add(trade);
     } while(remainingBuys > 0 && remainingSells > 0);
