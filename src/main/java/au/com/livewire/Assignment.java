@@ -21,7 +21,6 @@ import static au.com.livewire.Trade.TransactionType.SELL;
 public class Assignment {
   private StockExchange stockExchange;
   private ExchangeCode exchangeCode;
-  private int currentBrokerage;
 
   private static final CompanyCode[] COMPANY_CODES = CompanyCode.values();
 
@@ -96,7 +95,8 @@ public class Assignment {
     }
 
     ExchangeModule module = new ExchangeModule(exchangeCode, props);
-    Injector injector = Guice.createInjector(module);
+    Injector injector;
+    injector =  Guice.createInjector(module);
     Assignment assignment = injector.getInstance(Assignment.class);
 
     // need to create appProprties instance with the properties that we've just loaded...
@@ -126,7 +126,6 @@ public class Assignment {
   ) {
     this.exchangeCode = exchangeCode;
     this.stockExchange = stockExchange;
-    this.currentBrokerage = currentBrokerage;
   }
 
   public void trade() {

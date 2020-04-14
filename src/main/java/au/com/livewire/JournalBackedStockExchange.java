@@ -93,14 +93,14 @@ public class JournalBackedStockExchange implements StockExchange {
         .filter(t -> Trade.TransactionType.BUY == t.getTransactionType())
         .filter(t -> exchangeCode == t.getExchangeCode())
         .filter(t -> companyCode == t.getCompanyCode())
-        .map(t -> t.getQuantity())
+        .map(Trade::getQuantity)
         .mapToInt(Integer::intValue)
         .sum();
     int sellCount = tradeList.stream()
         .filter(t -> Trade.TransactionType.SELL == t.getTransactionType())
         .filter(t -> exchangeCode == t.getExchangeCode())
         .filter(t -> companyCode == t.getCompanyCode())
-        .map(t -> t.getQuantity())
+        .map(Trade::getQuantity)
         .mapToInt(Integer::intValue)
         .sum();
     int surplus = sellCount - buyCount;

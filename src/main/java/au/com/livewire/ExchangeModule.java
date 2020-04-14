@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.Properties;
 
 /**
- * Wires up the CXA and ASX stock exchanges..
+ * Wires up the assignment instance, including the CXA and ASX stock exchanges..
  */
 public class ExchangeModule extends AbstractModule {
   ExchangeCode exchangeCode;
@@ -25,6 +25,26 @@ public class ExchangeModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(Assignment.class);
+  }
+
+  @Provides
+  protected StockExchange provideStockExchange(
+      @Named("tradingJournal") TradingJournal tradingJournal
+  ) {
+    StockExchange result;
+    switch(exchangeCode) {
+      case ASX:
+        result = new AsxJournalBackedStockExchange(tradingJournal, getCurrentBrokerage(ExchangeCode.ASX));
+        break;
+      case CXA:
+        result = new CxaJournalBackedStockExchange(tradingJournal, getCurrentBrokerage(ExchangeCode.CXA));;
+        break;
+      default:
+        System.err.println("ERROR - unrecognised exchange code \"" + exchangeCode + "\"");
+        System.err.flush();
+        throw new IllegalArgumentException("unrecognised exchange code \"" + exchangeCode + "\"");
+    }
+    return result;
   }
 
   @Named("tradingJournal")
@@ -87,17 +107,6 @@ public class ExchangeModule extends AbstractModule {
   @Named("exchangeCode")
   ExchangeCode getExchangeCode() {
     return this.exchangeCode;
-  }
-
-  @Provides
-  StockExchange getStockExchange(
-      @Named("tradingJournal") TradingJournal tradingJournal,
-      @Named("exchangeCode") ExchangeCode exchangeCode,
-      @Named("currentBrokerage") int currentBrokerage
-  ) {
-    StockExchange result;
-    result = new JournalBackedStockExchange(exchangeCode, tradingJournal, currentBrokerage);
-    return result;
   }
 
   @Provides
