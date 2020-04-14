@@ -8,6 +8,10 @@ import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Represents an entry within the trading journal, which is either a
+ * buy or sell transaction.
+ */
 @Data
 @Builder
 public class Trade {
@@ -124,6 +128,13 @@ public class Trade {
     return result;
   }
 
+  /**
+   * Ugly manual parsing of a line of csv to extract a trade entry. Far more
+   * elegant solutions possible with more time available.
+   * @param candidate the (hopefully comma separated) text to be interrogated
+   * @return a trade representing the data specified in the CSV file.
+   * @throws IllegalArgumentException when things go awry.
+   */
   public static Trade fromCsv(
       final String candidate
   ) throws IllegalArgumentException {

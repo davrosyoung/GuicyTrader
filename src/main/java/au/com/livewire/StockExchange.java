@@ -13,14 +13,14 @@ public interface StockExchange {
    * @param code company to purchase for
    * @param units number of units to purchase.
    */
-  void buy(String code, Integer units) throws IllegalArgumentException, InsufficentUnitsException, IOException;
+  void buy(String code, Integer units) throws IllegalArgumentException, InvalidCodeException, InsufficentUnitsException, IOException;
 
   /**
    * Sell stock.
    * @param code company to purchase for
    * @param units number of units to dispense of.
    */
-  void sell(String code, Integer units) throws IllegalArgumentException;
+  void sell(String code, Integer units) throws InvalidCodeException, IllegalArgumentException;
 
   /**
    * Report aggregate volume available for each stock.

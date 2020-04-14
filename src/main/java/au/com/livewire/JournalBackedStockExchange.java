@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Implementation of a stock exchange backed by a journal of transactions.
+ * That journal of transactions could be one of several implementations.
  */
 public class JournalBackedStockExchange implements StockExchange {
   /**

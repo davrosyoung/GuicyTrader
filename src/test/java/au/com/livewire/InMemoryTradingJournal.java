@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * A simpleified implementation of the trading journal which allows us
+ * to run unit tests without writing to the filesystem.
+ */
 public class InMemoryTradingJournal implements TradingJournal {
   public List<Trade> entries = new CopyOnWriteArrayList<>();
 

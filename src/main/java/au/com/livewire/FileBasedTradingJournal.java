@@ -11,7 +11,8 @@ import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Dumb thread-safe ASCII file trading journal.
+ * Dumb thread-safe ASCII file trading journal, introduces a lock file, to
+ * help prevent multiple executables from mangling a journal csv file.
  */
 public class FileBasedTradingJournal extends SimpleFileBasedTradingJournal implements TradingJournal {
   private final static int MAX_LOCK_RETRIES = 5;

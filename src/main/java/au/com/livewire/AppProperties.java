@@ -5,6 +5,10 @@ import java.io.File;
 import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Those properties which dictate what attributes are used to configure
+ * the application with.
+ */
 public class AppProperties {
   Properties properties;
 
