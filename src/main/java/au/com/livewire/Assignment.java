@@ -101,10 +101,21 @@ public class Assignment {
 
     // need to create appProprties instance with the properties that we've just loaded...
 
-    assignment.trade();
-    assignment.report();
-    System.out.flush();
-    System.exit(0);
+    int exitStatus = 0;
+    try {
+      assignment.trade();
+      assignment.report();
+      System.out.flush();
+    } catch (Throwable e) {
+      System.err.println("-------< TRADING STOPPED >-------");
+      System.err.println(e.getClass().getName() + " - " + e.getMessage());
+      e.printStackTrace(System.err);
+      System.err.flush();
+      System.err.println("-------< TRADING STOPPED >-------");
+      System.err.flush();
+      exitStatus = 1;
+    }
+    System.exit(exitStatus);
   }
 
   @Inject
@@ -146,7 +157,7 @@ public class Assignment {
     BigDecimal tradingCosts;
     try {
       tradingCosts = stockExchange.getTradingCosts();
-      System.out.println("--------< Trading Report START >--------------");
+      System.out.println("--------< "+ exchangeCode + ": Trading Report START >--------------");
       System.out.println(String.format("Total brokerage charged $%9.2f", tradingCosts.doubleValue()));
       System.out.flush();
     } catch (IOException wtf) {
@@ -164,7 +175,7 @@ public class Assignment {
         System.out.println(String.format("%s : %d units", code, volume));
         System.out.flush();
       }
-      System.out.println("--------< Trading Report END >--------------");
+      System.out.println("--------< " + exchangeCode + ": Trading Report END >--------------");
       System.out.flush();
     } catch (IOException e) {
       e.printStackTrace();
